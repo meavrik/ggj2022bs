@@ -44,6 +44,9 @@ Snake = function(game, spriteKey, x, y) {
     //add 30 sections behind the head
     this.initSections(30);
 
+    //initialize the eyes
+    this.eyes = new EyePair(this.game, this.head, this.scale);
+
     //the edge is the front body that can collide with other snakes
     //it is locked to the head of this snake
     this.edgeOffset = 4;
@@ -181,6 +184,9 @@ Snake.prototype = {
             this.lastHeadPosition = new Phaser.Point(this.head.body.x, this.head.body.y);
             this.onCycleComplete();
         }
+
+        //update the eyes
+        this.eyes.update();
     },
     /**
      * Find in the headPath array which point the next section of the snake
@@ -254,6 +260,9 @@ Snake.prototype = {
             sec.scale.setTo(this.scale);
             sec.body.data.shapes[0].radius = this.game.physics.p2.pxm(sec.width*0.5);
         }
+
+        //scale eyes
+        this.eyes.setScale(scale);
     },
     /**
      * Increment length and scale
@@ -271,9 +280,11 @@ Snake.prototype = {
         this.game.physics.p2.removeConstraint(this.edgeLock);
         this.edge.destroy();
 
+        //destroy everything else
         this.sections.forEach(function(sec, index) {
             sec.destroy();
         });
+        this.eyes.destroy();
 
         //call this snake's destruction callbacks
         for (var i = 0 ; i < this.onDestroyedCallbacks.length ; i++) {
