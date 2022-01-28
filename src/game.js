@@ -4,6 +4,7 @@ Game.prototype = {
     preload: function() {
         //load assets
         this.game.load.image('circle','asset/circle.png');
+        this.game.load.image('shadow', 'asset/white-shadow.png');
     	this.game.load.image('background', 'asset/tile.png');
 
         this.game.load.image('eye-white', 'asset/eye-white.png');

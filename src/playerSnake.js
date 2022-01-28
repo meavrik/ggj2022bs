@@ -26,10 +26,12 @@ PlayerSnake.prototype.constructor = PlayerSnake;
 //make this snake light up and speed up when the space key is down
 PlayerSnake.prototype.spaceKeyDown = function() {
     this.speed = this.fastSpeed;
+    this.shadow.isLightingUp = true;
 }
 //make the snake slow down when the space key is up again
 PlayerSnake.prototype.spaceKeyUp = function() {
     this.speed = this.slowSpeed;
+    this.shadow.isLightingUp = false;
 }
 
 /**

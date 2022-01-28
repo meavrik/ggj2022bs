@@ -34,6 +34,8 @@ Snake = function(game, spriteKey, x, y) {
     this.preferredDistance = 17 * this.scale;
     this.queuedSections = 0;
 
+    //initialize the shadow
+    this.shadow = new Shadow(this.game, this.sections, this.scale);
     this.sectionGroup = this.game.add.group();
     //add the head of the snake
     this.head = this.addSectionAtPosition(x,y);
@@ -105,6 +107,7 @@ Snake.prototype = {
 
         this.sections.push(sec);
 
+        this.shadow.add(x,y);
         //add a circle body to this section
         sec.body.clearShapes();
         sec.body.addCircle(sec.width*0.5);
@@ -185,8 +188,9 @@ Snake.prototype = {
             this.onCycleComplete();
         }
 
-        //update the eyes
+        //update the eyes and the shadow below the snake
         this.eyes.update();
+        this.shadow.update();
     },
     /**
      * Find in the headPath array which point the next section of the snake
@@ -285,6 +289,7 @@ Snake.prototype = {
             sec.destroy();
         });
         this.eyes.destroy();
+        this.shadow.destroy();
 
         //call this snake's destruction callbacks
         for (var i = 0 ; i < this.onDestroyedCallbacks.length ; i++) {
