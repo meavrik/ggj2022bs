@@ -44,6 +44,22 @@ Snake = function(game, spriteKey, x, y) {
     //add 30 sections behind the head
     this.initSections(30);
 
+    //the edge is the front body that can collide with other snakes
+    //it is locked to the head of this snake
+    this.edgeOffset = 4;
+    this.edge = this.game.add.sprite(x, y - this.edgeOffset, this.spriteKey);
+    this.edge.name = "edge";
+    this.edge.alpha = 0;
+    this.game.physics.p2.enable(this.edge, this.debug);
+    this.edge.body.setCircle(this.edgeOffset);
+
+    //constrain edge to the front of the head
+    this.edgeLock = this.game.physics.p2.createLockConstraint(
+        this.edge.body, this.head.body, [0, -this.head.width*0.5-this.edgeOffset]
+    );
+
+    this.edge.body.onBeginContact.add(this.edgeContact, this);
+
     this.onDestroyedCallbacks = [];
     this.onDestroyedContexts = [];
 }
@@ -251,6 +267,10 @@ Snake.prototype = {
      */
     destroy: function() {
         this.game.snakes.splice(this.game.snakes.indexOf(this), 1);
+        //remove constraints
+        this.game.physics.p2.removeConstraint(this.edgeLock);
+        this.edge.destroy();
+
         this.sections.forEach(function(sec, index) {
             sec.destroy();
         });
@@ -261,6 +281,23 @@ Snake.prototype = {
                 this.onDestroyedCallbacks[i].apply(
                     this.onDestroyedContexts[i], [this]);
             }
+        }
+    },
+    /**
+     * Called when the front of the snake (the edge) hits something
+     * @param  {Phaser.Physics.P2.Body} phaserBody body it hit
+     */
+    edgeContact: function(phaserBody) {
+        //if the edge hits another snake's section, destroy this snake
+        if (phaserBody && this.sections.indexOf(phaserBody.sprite) == -1) {
+            this.destroy();
+        }
+        //if the edge hits this snake's own section, a simple solution to avoid
+        //glitches is to move the edge to the center of the head, where it
+        //will then move back to the front because of the lock constraint
+        else if (phaserBody) {
+            this.edge.body.x = this.head.body.x;
+            this.edge.body.y = this.head.body.y;
         }
     },
     /**
