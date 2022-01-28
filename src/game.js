@@ -5,7 +5,8 @@ Game.prototype = {
 
         //load assets
         this.game.load.image('circle','asset/circle.png');
-    	this.game.load.image('shadow', 'asset/white-shadow.png');
+    	this.game.load.image('circle2','asset/circle2.png');
+        this.game.load.image('shadow', 'asset/white-shadow.png');
     	this.game.load.image('background', 'asset/tile.png');
 
     	this.game.load.image('eye-white', 'asset/eye-white.png');
@@ -42,8 +43,8 @@ Game.prototype = {
         this.game.camera.follow(snake.head);
 
         //create bots
-        new BotSnake(this.game, 'circle', -200, 0);
-        new BotSnake(this.game, 'circle', 200, 0);
+        new BotSnake(this.game, 'circle2', -200, 0);
+        new BotSnake(this.game, 'circle2', 200, 0);
 
         //initialize snake groups and collision
         for (var i = 0 ; i < this.game.snakes.length ; i++) {
